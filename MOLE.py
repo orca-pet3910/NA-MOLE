@@ -182,7 +182,7 @@ class MOLE:
                         print("")
                     elif ln[0] == "help":
                         print("""
-    help (SEPARATE ARGUMENTS AND STATEMENTS WITH DOUBLE SPACES!!!):
+    help:
     "afk [seconds]": wait for [seconds] seconds
     "endln": prints a line break
     "eat [variable]": deletes [variable] from the universe
@@ -243,4 +243,5 @@ class Shell(MOLE):
 mole = MOLE()
 if version[-1] == "b":
     mole.iwarn(f"beta version ahead; use at your own risk")
+
 mole.interpret(maincode)
