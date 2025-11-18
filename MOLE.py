@@ -324,7 +324,7 @@ class MOLE:
 mole = MOLE()
 
 version = "v2.4"
-version_name = "Feature Update 2 Subrelease 3"
+version_name = "Feature Update 2 Subrelease 4"
 if __name__ == "__main__" and not "--nologo" in argv:
     print(f"MOLE version {version} ({version_name}) - made by orca.pet")
     if version[-1] == "b":
@@ -337,4 +337,5 @@ if __name__ == "__main__":
         input("Press enter to exit or drop to shell (-s).")
     if "-s" in argv:
         mole.interpret(["use __shell__", "__shell__"])
+
 # self._["yea"], self._["nah"], self._["nul"]
