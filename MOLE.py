@@ -289,7 +289,7 @@ class MOLE:
                             try:
                                 self.variables[ln[3]] = if_eval(self.variables[ln[1]], self._["yea"], self._["nah"], self._["nul"])
                             except:
-                                raise MOLEPackageError from MOLEInterpreterError
+                                raise MOLEInterpreterError from MOLEPackageError
                     elif ln[0] == "exit":
                         return
                     elif ln[0] == "asknumber":
@@ -339,4 +339,5 @@ if __name__ == "__main__":
         mole.interpret(["use __shell__", "__shell__"])
 
 # self._["yea"], self._["nah"], self._["nul"]
+
 
