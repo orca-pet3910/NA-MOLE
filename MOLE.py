@@ -301,7 +301,10 @@ class MOLE:
                         except ValueError:
                             raise MOLEInterpreterError("Invalid value") from ValueError("Invalid value")
                     elif ln[0] == "askstr":
-                        self.variables[ln[1]] = input(ln[2])
+                        try:
+                            self.variables[ln[1]] = input(ln[2])
+                        except KeyboardInterrupt:
+                            raise MOLEInterpreterError("Pressed ^C")
                     elif ln[0] == "execifeval":
                         try:
                             if if_file(self.variables[ln[1]], self._["yea"], self._["nah"]) == self._["yea"]:
