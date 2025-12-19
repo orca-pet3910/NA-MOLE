@@ -1,0 +1,40 @@
+use statements
+use random
+
+print "Hard mode selected! 3 attempts"
+randomint 1 10 number
+endln
+print "Number randomized."
+endln
+
+asknumber guess "What is your guess? 3 attempts left "
+if guess morethan number -> is_outside_range
+execifeval is_outside_range GuessingGame/error
+if guess lessthan number -> is_outside_range
+execifeval is_outside_range GuessingGame/error
+if guess equals number -> win
+execifeval win GuessingGame/win
+execifeval win exit
+
+asknumber guess "What is your guess? 2 attempts left "
+if guess morethan number -> is_outside_range
+execifeval is_outside_range GuessingGame/error
+if guess lessthan number -> is_outside_range
+execifeval is_outside_range GuessingGame/error
+if guess equals number -> win
+execifeval win GuessingGame/win
+execifeval win exit
+
+asknumber guess "What is your guess? 1 attempts left "
+if guess morethan number -> is_outside_range
+execifeval is_outside_range GuessingGame/error
+if guess lessthan number -> is_outside_range
+execifeval is_outside_range GuessingGame/error
+if guess equals number -> win
+execifeval win GuessingGame/win
+execifeval win exit
+
+print "You lost! The number was "
+print number
+endln
+exit

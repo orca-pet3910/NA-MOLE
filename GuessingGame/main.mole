@@ -1,0 +1,17 @@
+use statements
+
+let yea be yea
+let nah be nah
+let nul be nul
+
+print "Number Guessing Game by orca.pet"
+endln
+
+askbool difficulty "Do you want guessing from 1 to 10 (enter y) or from 1 to 20 (enter n)? "
+if difficulty equals yea -> game_easy
+if difficulty equals nah -> game_hard
+execifeval game_easy GuessingGame/game_easy
+execifeval game_hard GuessingGame/game_hard
+
+eat game_easy
+eat game_hard
