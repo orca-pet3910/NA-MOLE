@@ -2,6 +2,23 @@ from time import sleep
 import shlex
 from sys import argv
 
+"""
+1111
+||||
+0123
+0: enable use
+1: enable include
+2: enable arguments
+3: start interpreting
+"""
+
+settings = open("./SETTINGS.BIN", "rb").read()
+settings = "".join(f"{b:08b}" for b in settings)
+BYTE0 = bool(int(settings[0]))
+BYTE1 = bool(int(settings[1]))
+BYTE2 = bool(int(settings[2]))
+BYTE3 = bool(int(settings[3]))
+
 class MOLEBetaException(BaseException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
@@ -66,7 +83,7 @@ class MOLE:
     def iwarn(self, *args: object):
         print('[Interpreter WARN]', str(args).replace("\n", "\n[Interpreter WARN] ")[2:-3])
     
-    def ierror(self, exceptionclass: any, args: str):
+    def ierror(self, exceptionclass, args: str):
         print(f'[Interpreter ERROR from {exceptionclass.__name__}]\n{args.strip("\n")}')
         quit(1)
 
@@ -178,13 +195,16 @@ class MOLE:
                         if db0raise:
                             raise ZeroDivisionError(f"an attempt was made to divide {self.variables[ln[1]]} by zero - don't do that at home kids ;)")
                     elif ln[0] == "include":
-                        if ln[1] == "__my_dad__":
-                            raise NameError("He went for milk. :P") from None
-                        try:
-                            with open(ln[1], "r", encoding="utf-8") as included:
-                                self.interpret(included.read().splitlines())
-                        except FileNotFoundError:
-                            raise RuntimeError(f"execution failed; no such file {ln[1]}")
+                        if BYTE1:
+                            if ln[1] == "__my_dad__":
+                                raise NameError("He went for milk. :P") from None
+                            try:
+                                with open(ln[1], "r", encoding="utf-8") as included:
+                                    self.interpret(included.read().splitlines())
+                            except FileNotFoundError:
+                                raise RuntimeError(f"execution failed; no such file {ln[1]}")
+                        else:
+                            raise MOLEPackageError("Unable to proceed; please modify ./SETTINGS.BIN using a binary file editor")
                     elif ln[0] == "eat":
                         fail = False
                         try:
@@ -232,33 +252,36 @@ number   : used for mathematical/arythmetical
 -s                : uses __shell__ and runs the shell after the script ends - uses and variables DO NOT save
 -p/--pause-on-exit: before MOLE exits, pause continued execution of the script (useful for self-closing terminals)"""))
                     elif ln[0] == "use":
-                        if ln[1] == "random":
-                            try:
-                                global randint
-                                from __random__ import randint
-                            except:
-                                self.ierror(MOLEPackageMissing, "")
-                        elif ln[1] == "statements":
-                            try:
-                                global if_statement
-                                from __statements__ import if_statement, if_eval, if_file
-                            except:
-                                self.ierror(MOLEPackageMissing, "")
-                        elif ln[1] == "__shell__":
-                            try:
-                                global Shell
-                                from __shell__ import Shell
-                            except:
-                                self.ierror(MOLEPackageMissing, "")
-                        elif ln[1] == "regio":
-                            try:
-                                global read
-                                from __io__ import read
-                            except:
-                                raise
-                                self.ierror(MOLEPackageMissing, "")
+                        if BYTE0:
+                            if ln[1] == "random":
+                                try:
+                                    global randint
+                                    from __random__ import randint
+                                except:
+                                    self.ierror(MOLEPackageMissing, "")
+                            elif ln[1] == "statements":
+                                try:
+                                    global if_statement
+                                    from __statements__ import if_statement, if_eval, if_file
+                                except:
+                                    self.ierror(MOLEPackageMissing, "")
+                            elif ln[1] == "__shell__":
+                                try:
+                                    global Shell
+                                    from __shell__ import Shell
+                                except:
+                                    self.ierror(MOLEPackageMissing, "")
+                            elif ln[1] == "regio":
+                                try:
+                                    global read
+                                    from __io__ import read
+                                except:
+                                    raise
+                                    #self.ierror(MOLEPackageMissing, "")
+                            else:
+                                raise MOLEPackageMissing
                         else:
-                            raise MOLEPackageMissing
+                            raise MOLEPackageError("Unable to proceed; please modify ./SETTINGS.BIN using a binary file editor")
                     elif ln[0] == "randomint":
                         if 'randint' in globals():
                             self.variables[ln[3]] = (randint(int(ln[1]), int(ln[2])))
@@ -358,19 +381,26 @@ number   : used for mathematical/arythmetical
 
 mole = MOLE()
 
-version = "v2.5"
-version_name = "Feature Update 2 Subrelease 5"
+version = "v2.6"
+version_name = "Feature Update 2 Subrelease 6"
 if __name__ == "__main__" and not "--nologo" in argv:
-    print(f"MOLE version {version} ({version_name}) - made by orca.pet")
+    print(f"MOLE {version} ({version_name}) (C) orca.pet3910YT")
     if version[-1] == "b":
         mole.iwarn(f"beta version ahead; use at your own risk")
 
 if __name__ == "__main__":
-    if argv[1] != "-s":
-        maincode = open(argv[1], "r+", encoding="utf-8").read().splitlines()
-        mole.interpret(maincode)
-    if "--pause-on-exit" in argv or "-p" in argv:
-        input("Press enter to exit or drop to shell (-s).")
-    if "-s" in argv: #and argv[1] != "-s":
-        mole.interpret(["use __shell__", "__shell__"])
+        if BYTE2:
+            if len(argv) > 1:
+                if argv[1] != "-s":
+                    maincode = open(argv[1], "r+", encoding="utf-8").read().splitlines()
+                    mole.interpret(maincode)
+                if "--pause-on-exit" in argv or "-p" in argv:
+                    input("Press enter to exit or drop to shell (-s).")
+                if "-s" in argv: #and argv[1] != "-s":
+                    mole.interpret(["use __shell__", "__shell__"])
+                else:
+                    raise MOLEInterpreterError("Too little arguments. argc must be >1")
+        if BYTE3 and not BYTE2:
+            maincode = open(argv[1], "r+", encoding="utf-8").read().splitlines()
+            mole.interpret(maincode)
 # self._["yea"], self._["nah"], self._["nul"]
