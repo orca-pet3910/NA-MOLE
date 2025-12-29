@@ -14,10 +14,11 @@ from sys import argv
 
 settings = open("./SETTINGS.BIN", "rb").read()
 settings = "".join(f"{b:08b}" for b in settings)
-BYTE0 = bool(int(settings[0]))
-BYTE1 = bool(int(settings[1]))
-BYTE2 = bool(int(settings[2]))
-BYTE3 = bool(int(settings[3]))
+B0 = bool(int(settings[0]))
+B1 = bool(int(settings[1]))
+B2 = bool(int(settings[2]))
+B3 = bool(int(settings[3]))
+B4 = bool(int(settings[4]))
 
 class MOLEBetaException(BaseException):
     def __init__(self, *args: object) -> None:
@@ -88,10 +89,13 @@ class MOLE:
         quit(1)
 
     def onebyoneprint(self, string) -> None:
-        mainstring = list(str(string))
-        for a in mainstring:
-            sleep(0.005)
-            print(a, end="", flush=True)
+        if B4:
+            mainstring = list(str(string))
+            for a in mainstring:
+                sleep(0.005)
+                print(a, end="", flush=True)
+        else:
+            print(string, end="", flush=True)
 
     def interpret(self, line: list):
         try:
@@ -195,7 +199,7 @@ class MOLE:
                         if db0raise:
                             raise ZeroDivisionError(f"an attempt was made to divide {self.variables[ln[1]]} by zero - don't do that at home kids ;)")
                     elif ln[0] == "include":
-                        if BYTE1:
+                        if B1:
                             if ln[1] == "__my_dad__":
                                 raise NameError("He went for milk. :P") from None
                             try:
@@ -252,7 +256,7 @@ number   : used for mathematical/arythmetical
 -s                : uses __shell__ and runs the shell after the script ends - uses and variables DO NOT save
 -p/--pause-on-exit: before MOLE exits, pause continued execution of the script (useful for self-closing terminals)"""))
                     elif ln[0] == "use":
-                        if BYTE0:
+                        if B0:
                             if ln[1] == "random":
                                 try:
                                     global randint
@@ -389,7 +393,7 @@ if __name__ == "__main__" and not "--nologo" in argv:
         mole.iwarn(f"beta version ahead; use at your own risk")
 
 if __name__ == "__main__":
-        if BYTE2:
+        if B2:
             if len(argv) > 1:
                 if argv[1] != "-s":
                     maincode = open(argv[1], "r+", encoding="utf-8").read().splitlines()
@@ -400,7 +404,7 @@ if __name__ == "__main__":
                     mole.interpret(["use __shell__", "__shell__"])
                 else:
                     raise MOLEInterpreterError("Too little arguments. argc must be >1")
-        if BYTE3 and not BYTE2:
+        if B3 and not B2:
             maincode = open(argv[1], "r+", encoding="utf-8").read().splitlines()
             mole.interpret(maincode)
 # self._["yea"], self._["nah"], self._["nul"]
