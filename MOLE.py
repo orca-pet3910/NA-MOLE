@@ -3,13 +3,15 @@ import shlex
 from sys import argv
 
 """
-1111
-||||
-0123
+11111
+|||||
+01234
 0: enable use
 1: enable include
 2: enable arguments
 3: start interpreting
+4: enable onebyoneprint to print
+like early 80s computers
 """
 
 settings = open("./SETTINGS.BIN", "rb").read()
